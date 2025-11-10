@@ -11,7 +11,7 @@ if (!window.Stripe) {
   (async () => {
     try {
       // Test backend health
-      const r = await fetch('http://localhost:4000/health');
+      const r = await fetch('https://bwr-starter.onrender.com/health');
       console.log('Health status:', r.status, await r.text());
     } catch (e) {
       console.error('Health fetch failed:', e);
@@ -23,9 +23,9 @@ if (!window.Stripe) {
   root.innerHTML = '';
 
   const el = BwrWidget({
-    product: { id: 'gid://shopify/Product/123', variantId: 'gid://shopify/ProductVariant/456', title: 'Demo Product' },
-    merchantDomain: 'demo-shop.myshopify.com',
-    apiBase: 'http://localhost:4000'
-  });
+  product: { id: 'gid://shopify/Product/123', variantId: 'gid://shopify/ProductVariant/456', title: 'Demo Product' },
+  merchantDomain: 'demo-shop.myshopify.com',
+  apiBase: 'https://bwr-starter.onrender.com'
+});
   root.appendChild(el);
 }

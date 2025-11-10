@@ -1,143 +1,17 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>BWR Widget — Debug Test</title>
-
-    <!-- Stripe.js (must load before main.js if you use Auto-purchase) -->
-    <script src="https://js.stripe.com/v3/"></script>
-
-    <!-- Minimal styles -->
-    <style>
-      :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
-      body { margin: 0; padding: 0; background: #fafafa; }
-      .wrap { display: grid; grid-template-columns: 420px 1fr; gap: 16px; padding: 16px; }
-      .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 14px; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
-      .card h2 { margin: 0; padding: 12px 14px; border-bottom: 1px solid #f0f0f0; font-size: 16px; }
-      .card .body { padding: 14px; }
-      #bwr-root { padding: 14px; }
-      #log { height: 70vh; overflow: auto; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; background: #0b1220; color: #c9d1d9; border-radius: 10px; padding: 12px; }
-      .row { margin-bottom: 10px; border-bottom: 1px dashed #233; padding-bottom: 10px; }
-      .row:last-child { border-bottom: none; }
-      .req { color: #9cdcfe; }
-      .res { color: #b5cea8; }
-      .err { color: #ff6b6b; }
-      .tag { display:inline-block; padding: 0 6px; border: 1px solid #334; border-radius: 6px; margin-right: 6px; font-size: 11px; color:#9aa4b2;}
-      .flex { display:flex; gap:8px; align-items:center; flex-wrap: wrap; }
-      .btn { padding:6px 10px; border:1px solid #ddd; border-radius:10px; background:#fff; cursor:pointer; }
-      .btn:hover { background:#f7f7f7; }
-      .small { font-size: 12px; color: #64748b; }
-      .ok { color: #16a34a; }
-    </style>
-
-    <!-- Optional: your widget CSS if you have it -->
-    <link rel="stylesheet" href="./src/style.css" />
-  </head>
-  <body>
-    <div class="wrap">
-      <!-- Left: Widget -->
-      <div class="card">
-        <h2>Buy When Restocked — Widget</h2>
-        <div id="bwr-root"></div>
-        <div class="body small">
-          <div class="flex">
-            <span class="tag">apiBase: http://localhost:4000</span>
-            <span id="health" class="tag">health: …</span>
-            <button id="ping" class="btn">Ping /health</button>
-          </div>
-          <div id="stripe-status" class="small" style="margin-top:8px;"></div>
-        </div>
-      </div>
-
-      <!-- Right: Live Log -->
-      <div class="card">
-        <h2>Live Debug Log</h2>
-        <div class="body">
-          <div class="flex" style="margin-bottom:8px;">
-            <button id="clear" class="btn">Clear</button>
-            <span class="small">All fetch() calls are captured and shown here.</span>
-          </div>
-          <div id="log"></div>
-        </div>
-      </div>
-    </div>
-
-    <script>
-      // --- Simple log panel ---
-      const $log = () => document.getElementById('log');
-      const add = (html) => {
-        const row = document.createElement('div');
-        row.className = 'row';
-        row.innerHTML = html;
-        $log().prepend(row);
-      };
-      const esc = (s) => {
-        try { return JSON.stringify(s, null, 2); } catch { return String(s); }
-      };
-
-      // Monkeypatch fetch to log requests/responses
-      const _fetch = window.fetch.bind(window);
-      window.fetch = async (input, init = {}) => {
-        const url = (typeof input === 'string') ? input : input.url;
-        const method = (init && init.method) || 'GET';
-        const reqBody = init && init.body ? init.body : null;
-        add(`<div class="req">➡️ <b>${method}</b> <code>${url}</code></div>${reqBody ? '<pre>'+esc(reqBody)+'</pre>' : ''}`);
-        try {
-          const res = await _fetch(input, init);
-          const clone = res.clone();
-          let text = '';
-          try { text = await clone.text(); } catch {}
-          add(`<div class="res">⬅️ <b>${res.status}</b> <code>${url}</code></div>${text ? '<pre>'+esc(text)+'</pre>' : ''}`);
-          return res;
-        } catch (e) {
-          add(`<div class="err">⛔ Fetch error <code>${url}</code></div><pre>${esc(e && e.message || e)}</pre>`);
-          throw e;
-        }
-      };
-
-      // Clear log
-      document.getElementById('clear').addEventListener('click', () => { $log().innerHTML = ''; });
-
-      // Ping /health button
-      document.getElementById('ping').addEventListener('click', async () => {
-        try {
-          const r = await fetch('http://localhost:4000/health');
-          document.getElementById('health').textContent = 'health: ' + r.status;
-          document.getElementById('health').className = 'tag ' + (r.ok ? 'ok' : '');
-        } catch (e) {
-          document.getElementById('health').textContent = 'health: error';
-        }
-      });
-
-      // Stripe presence indicator
-      const stripeOk = !!window.Stripe;
-      document.getElementById('stripe-status').innerHTML = stripeOk
-        ? 'Stripe.js loaded <span class="ok">✅</span>'
-        : '<span class="err">Stripe.js missing ❌</span> Add &lt;script src="https://js.stripe.com/v3/"&gt; to the &lt;head&gt;.';
-    </script>
-
-    <!-- Load your widget after the logger is set up -->
-    <script type="module">
-      import BwrWidget from './src/BwrWidget.js';
-
-      // Health check on load (shows in log too)
-      try {
-        fetch('http://localhost:4000/health').then(async r => {
-          const el = document.getElementById('health');
-          el.textContent = 'health: ' + r.status;
-          if (r.ok) el.className = 'tag ok';
-        });
-      } catch {}
-
-      const root = document.getElementById('bwr-root');
-      root.innerHTML = '';
-      const el = BwrWidget({
-        product: { id: 'gid://shopify/Product/123', variantId: 'gid://shopify/ProductVariant/456', title: 'Demo Product' },
-        merchantDomain: 'demo-shop.myshopify.com',
-        apiBase: 'http://localhost:4000'
-      });
-      root.appendChild(el);
-    </script>
-  </body>
+<head>
+  <meta charset="utf-8" />
+  <title>Buy When Restocked — Widget</title>
+  <script src="https://js.stripe.com/v3/"></script>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 2rem; }
+    #bwr-root { margin-top: 2rem; border: 1px solid #ccc; padding: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>Buy When Restocked — Widget</h1>
+  <div id="bwr-root"></div>
+  <script type="module" src="./src/main.js"></script>
+</body>
 </html>
