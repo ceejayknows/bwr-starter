@@ -13,32 +13,37 @@ import stripeWebhook from './routes/stripe-webhook.js';
 const app = express();
 
 /**
- * ✅ FIXED CORS CONFIGURATION
- * Allows local testing + Render frontend access.
+ * ✅ CORS CONFIG — allows local + production domains
  */
 const allowedOrigins = [
-  'http://127.0.0.1:8080',            // local test server
-  'http://localhost:8080',            // alternate local dev
-  'https://bwr-starter.onrender.com', // your live Render backend
+  'http://127.0.0.1:8080',
+  'http://localhost:8080',
+  'https://bwr-starter.onrender.com',
 ];
 
 app.use(
   cors({
     origin: (origin, callback) => {
       if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-      console.log('❌ Blocked by CORS:', origin);
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      console.warn('❌ CORS blocked:', origin);
       return callback(new Error('Not allowed by CORS'));
     },
-    credentials: true,
   })
 );
 
 /**
- * ✅ Body parser setup
- * Keeps raw body for Stripe webhook verification.
+ * ✅ Stripe webhook needs RAW body, not parsed JSON.
+ * This route must be declared *before* bodyParser.json().
+ */
+app.post(
+  '/webhooks/stripe',
+  express.raw({ type: 'application/json' }),
+  stripeWebhook
+);
+
+/**
+ * ✅ JSON parser for all other routes
  */
 app.use(
   bodyParser.json({
@@ -49,39 +54,31 @@ app.use(
 );
 
 /**
- * ✅ Health endpoints
- * Used by widget and Render to verify API availability.
+ * ✅ Health check endpoints
  */
-app.get('/', (_req, res) => res.send('✅ BWR API is running'));
-app.get('/health', (_req, res) =>
-  res.status(200).json({ ok: true, service: 'bwr-backend' })
-);
+app.get('/', (_req, res) => res.send('✅ BWR API is running.'));
+app.get('/health', (_req, res) => res.json({ ok: true, service: 'bwr-backend' }));
 
 /**
- * ✅ Core business logic routes
+ * ✅ Main business routes
  */
 app.use('/api/opt-in', optinRouter);
 app.use('/api/checkout', checkoutRouter);
 app.use('/api/payments', paymentsRouter);
 
 /**
- * ✅ Stripe webhook (events: setup_intent.succeeded, payment_intent.*)
- */
-app.use('/webhooks/stripe', stripeWebhook);
-
-/**
- * ✅ Error handling
+ * ✅ Fallbacks & error handlers
  */
 app.use((req, res) => res.status(404).json({ error: 'Not found' }));
 app.use((err, _req, res, _next) => {
-  console.error('🔥 Unhandled error:', err);
+  console.error('🔥 Server error:', err);
   res.status(500).json({ error: 'Server error', detail: err.message });
 });
 
 /**
- * ✅ Start server
+ * ✅ Start the server
  */
-const port = Number(process.env.PORT || 4000);
+const port = process.env.PORT || 4000;
 app.listen(port, '0.0.0.0', () => {
   console.log(`🚀 BWR API listening on port ${port}`);
 });
