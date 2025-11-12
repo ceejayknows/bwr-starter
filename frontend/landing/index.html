@@ -1,44 +1,177 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <title>Cenja — Buy When Restocked</title>
-  <style>
-    body {
-      font-family: system-ui, sans-serif;
-      max-width: 640px;
-      margin: 3rem auto;
-      line-height: 1.6;
-      padding: 0 1rem;
-    }
-    h1 { font-size: 1.8rem; margin-bottom: 1rem; }
-    button, a.button {
-      display: inline-block;
-      background: #111;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      padding: 0.6rem 1.2rem;
-      text-decoration: none;
-      cursor: pointer;
-      font-weight: 600;
-    }
-    .cta { margin-top: 1rem; }
-  </style>
-</head>
-<body>
-  <h1>Cenja — Buy When Restocked</h1>
-  <p>Turn sold-out product pages into revenue. Capture emails, send 1-click checkout links, or auto-purchase on restock.</p>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cenja — Buy When Restocked</title>
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/1011/1011325.png" />
+    <style>
+      :root {
+        --accent: #2d7efb;
+        --dark: #0b0b0b;
+        --gray: #555;
+        --light: #f9f9f9;
+      }
 
-  <div class="cta">
-    <a class="button" href="/iframe-demo" target="_blank">Open Demo Widget</a>
-  </div>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-  <div class="cta">
-    <a class="button" href="#">Start Free Trial</a>
-  </div>
+      body {
+        font-family: 'Inter', sans-serif;
+        background: var(--light);
+        color: var(--dark);
+        line-height: 1.6;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
 
-  <p style="margin-top:2rem;font-size:0.8rem;color:#555;">© 2025 Cenja</p>
-</body>
+      header {
+        background: white;
+        border-bottom: 1px solid #eee;
+        padding: 1.5rem 3rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      header h1 {
+        font-size: 1.5rem;
+        color: var(--accent);
+      }
+
+      header nav a {
+        color: var(--gray);
+        text-decoration: none;
+        margin-left: 1.5rem;
+        font-weight: 500;
+      }
+
+      header nav a:hover {
+        color: var(--accent);
+      }
+
+      main {
+        flex: 1;
+        max-width: 900px;
+        margin: 4rem auto;
+        text-align: center;
+        padding: 0 1.5rem;
+      }
+
+      h2 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+      }
+
+      p {
+        font-size: 1.2rem;
+        color: var(--gray);
+        margin-bottom: 2rem;
+      }
+
+      .cta-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: center;
+        margin-bottom: 4rem;
+      }
+
+      .cta {
+        background: var(--accent);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 1rem 2rem;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s ease;
+      }
+
+      .cta:hover {
+        background: #155ed3;
+      }
+
+      section.features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-bottom: 4rem;
+      }
+
+      section.features div {
+        background: white;
+        border-radius: 10px;
+        padding: 2rem;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      footer {
+        text-align: center;
+        padding: 1.5rem;
+        font-size: 0.9rem;
+        color: var(--gray);
+      }
+
+      footer a {
+        color: var(--accent);
+        text-decoration: none;
+        margin-left: 0.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Cenja</h1>
+      <nav>
+        <a href="#features">Why it works</a>
+        <a href="#demo">Demo</a>
+        <a href="#install">Install</a>
+      </nav>
+    </header>
+
+    <main>
+      <h2>Buy When Restocked</h2>
+      <p>
+        Turn sold-out product pages into revenue. Capture intent, automate restock purchases,
+        and keep your brand top of mind.
+      </p>
+
+      <div class="cta-buttons">
+        <a href="/iframe-demo" target="_blank"><button class="cta">View Demo</button></a>
+        <a href="#install"><button class="cta">Start Free Trial</button></a>
+      </div>
+
+      <section id="features" class="features">
+        <div>
+          <h3>💡 Capture Interest</h3>
+          <p>Turn sold-out shoppers into email subscribers and buyers with one click.</p>
+        </div>
+        <div>
+          <h3>⚙️ Auto-Purchase</h3>
+          <p>Customers can pre-authorize a charge to automatically buy when back in stock.</p>
+        </div>
+        <div>
+          <h3>🛠️ Simple Integration</h3>
+          <p>Drop a single script tag into your Shopify theme. No complicated setup.</p>
+        </div>
+      </section>
+
+      <h3 id="install">Install Widget</h3>
+      <p>Start your free 14-day trial — no credit card required.</p>
+      <div class="cta-buttons">
+        <button class="cta">Install Now</button>
+      </div>
+    </main>
+
+    <footer>
+      © 2025 Cenja — All rights reserved.
+    </footer>
+  </body>
 </html>
 
