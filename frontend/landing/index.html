@@ -123,6 +123,20 @@
         text-decoration: none;
         margin-left: 0.5rem;
       }
+
+      /* Popup demo styling */
+      #bwr-widget-popup {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        width: 380px;
+        height: 500px;
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        z-index: 9999;
+        display: none;
+      }
     </style>
   </head>
   <body>
@@ -172,6 +186,25 @@
     <footer>
       © 2025 Cenja — All rights reserved.
     </footer>
+
+    <!-- Auto popup loader for Render -->
+    <iframe
+      id="bwr-widget-popup"
+      src="/iframe-demo"
+      allow="payment"
+    ></iframe>
+
+    <script>
+      // Only auto-load popup if live on Render or production
+      window.addEventListener("load", () => {
+        const iframe = document.getElementById("bwr-widget-popup");
+        if (window.location.hostname.includes("onrender.com")) {
+          setTimeout(() => {
+            iframe.style.display = "block";
+          }, 2000);
+        }
+      });
+    </script>
   </body>
 </html>
 
