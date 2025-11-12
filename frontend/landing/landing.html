@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cenja — Buy When Restocked</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+
+    <style>
+      :root {
+        --primary: #111827;
+        --accent: #2563eb;
+        --bg: #f9fafb;
+        --text-muted: #6b7280;
+      }
+
+      body {
+        font-family: 'Inter', sans-serif;
+        margin: 0;
+        background: var(--bg);
+        color: var(--primary);
+        line-height: 1.6;
+      }
+
+      header {
+        text-align: center;
+        padding: 4rem 1rem 2rem;
+      }
+
+      header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+      }
+
+      header p {
+        font-size: 1.125rem;
+        color: var(--text-muted);
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .cta {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 2rem;
+      }
+
+      .cta a {
+        text-decoration: none;
+        background: var(--accent);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        transition: background 0.2s ease-in-out;
+      }
+
+      .cta a:hover {
+        background: #1d4ed8;
+      }
+
+      section {
+        max-width: 800px;
+        margin: 4rem auto;
+        padding: 0 1rem;
+      }
+
+      section h2 {
+        text-align: center;
+        margin-bottom: 1.5rem;
+        font-size: 1.75rem;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0 auto;
+        max-width: 600px;
+      }
+
+      li {
+        margin: 0.75rem 0;
+        padding-left: 1.5rem;
+        position: relative;
+      }
+
+      li::before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        color: var(--accent);
+        font-weight: 700;
+      }
+
+      footer {
+        text-align: center;
+        padding: 2rem 1rem;
+        border-top: 1px solid #e5e7eb;
+        color: var(--text-muted);
+        font-size: 0.875rem;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <h1>Cenja — Buy When Restocked</h1>
+      <p>Turn sold-out product pages into revenue. Capture emails, send 1-click checkout links, or auto-purchase on restock.</p>
+
+      <div class="cta">
+        <a href="#demo">See Demo</a>
+        <a href="#install">Start Free Trial</a>
+      </div>
+    </header>
+
+    <section id="why">
+      <h2>Why It Works</h2>
+      <ul>
+        <li>Capture customers at the moment of highest intent (sold-out page)</li>
+        <li>Send 1-click checkout links or auto-purchase when back in stock</li>
+        <li>Minimal install — just one script tag in your Shopify theme</li>
+      </ul>
+    </section>
+
+    <section id="demo" style="text-align: center">
+      <h2>Live Demo</h2>
+      <p><a href="/iframe-demo" target="_blank" style="color: var(--accent); font-weight: 600;">Open Demo Widget</a></p>
+    </section>
+
+    <section id="install" style="text-align: center">
+      <h2>Start a 14-Day Free Trial</h2>
+      <p>No credit card required. Install the widget and start converting restocks today.</p>
+      <a href="#install" style="background: var(--accent); color: white; padding: 0.75rem 1.5rem; border-radius: 0.5rem; font-weight: 600; text-decoration: none;">Install Widget</a>
+    </section>
+
+    <footer>
+      © 2025 Cenja — All rights reserved.
+    </footer>
+  </body>
+</html>
+
