@@ -6,19 +6,21 @@ import bodyParser from 'body-parser';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-// routers
+// Feature routers
 import optinRouter from './routes/optin.js';
 import checkoutRouter from './routes/checkout.js';
 import paymentsRouter from './routes/payments.js';
 import stripeWebhook from './routes/stripe-webhook.js';
 
-const app = express();
-
-// __dirname helper for ESM
+// Resolve dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-/* ----------------------  ✅  CORS CONFIG  ---------------------- */
+const app = express();
+
+/**
+ * ✅ CORS Configuration — allows local dev + Render
+ */
 const allowedOrigins = [
   'http://127.0.0.1:8080',
   'http://localhost:8080',
@@ -30,15 +32,18 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
-      console.log('❌ Blocked by CORS:', origin);
-      callback(new Error('Not allowed by CORS'));
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      console.warn('❌ Blocked by CORS:', origin);
+      return callback(new Error('Not allowed by CORS'));
     },
     credentials: true,
   })
 );
 
-/* ----------------------  ✅  BODY PARSER  ---------------------- */
+/**
+ * ✅ Body parser with raw body support for Stripe webhooks
+ */
 app.use(
   bodyParser.json({
     verify: (req, _res, buf) => {
@@ -47,30 +52,49 @@ app.use(
   })
 );
 
-/* ----------------------  ✅  STATIC ROUTES  ---------------------- */
-// serve landing page at /landing
-app.use('/landing', express.static(path.join(__dirname, '../frontend/landing')));
-
-// serve widget test page at /iframe-demo
-app.use('/iframe-demo', express.static(path.join(__dirname, '../frontend/widget')));
-
-/* ----------------------  ✅  HEALTH + API ROUTES  ---------------------- */
+/**
+ * ✅ Health endpoints
+ */
 app.get('/', (_req, res) => res.send('✅ BWR API is running'));
 app.get('/health', (_req, res) => res.status(200).json({ ok: true, service: 'bwr-backend' }));
 
+/**
+ * ✅ Serve static landing and widget files
+ */
+app.use('/landing', express.static(path.resolve(__dirname, '../frontend/landing')));
+app.use('/iframe-demo', express.static(path.resolve(__dirname, '../frontend/widget')));
+
+/**
+ * ✅ Serve widget.js directly for embedding
+ */
+app.get('/widget.js', (req, res) => {
+  res.sendFile(path.resolve(__dirname, '../frontend/widget/src/main.js'));
+});
+
+/**
+ * ✅ Business logic routes
+ */
 app.use('/api/opt-in', optinRouter);
 app.use('/api/checkout', checkoutRouter);
 app.use('/api/payments', paymentsRouter);
+
+/**
+ * ✅ Stripe webhook
+ */
 app.use('/webhooks/stripe', stripeWebhook);
 
-/* ----------------------  ✅  ERRORS  ---------------------- */
+/**
+ * ✅ Error handlers
+ */
 app.use((req, res) => res.status(404).json({ error: 'Not found' }));
 app.use((err, _req, res, _next) => {
-  console.error('🔥 Server error:', err.message);
+  console.error('🔥 Server error:', err);
   res.status(500).json({ error: 'Server error', detail: err.message });
 });
 
-/* ----------------------  ✅  START  ---------------------- */
+/**
+ * ✅ Start server
+ */
 const port = Number(process.env.PORT || 4000);
 app.listen(port, '0.0.0.0', () => {
   console.log(`🚀 BWR API listening on port ${port}`);
